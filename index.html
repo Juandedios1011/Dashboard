@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Avanzado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+
+        .sidebar {
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        .chart-container {
+            height: 350px;
+        }
+
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --dark: #0f172a;
+            --light: #f1f5f9;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex flex-col md:flex-row h-full">
+        <!-- Sidebar -->
+        <div class="sidebar md:w-64 bg-white dark:bg-slate-900 shadow-lg fixed h-full z-10">
+            <div class="p-4 border-b dark:border-slate-700 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <img src="C:\Users\Queve\OneDrive\Escritorio\Dennis\Imagenes\png-clipart-playboy-bunny-logo-thumbnail.png" alt="Application logo" 
+                         class="w-10 h-10 rounded-lg">
+                    <h1 class="text-xl font-bold text-gray-800 dark:text-white">Analisis de cabeza de daniela</h1>
+                </div>
+                <button id="closeSidebar" class="md:hidden text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-times">N</i>
+                </button>
+            </div>
+            <nav class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="flex items-center p-2 rounded-lg bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-white">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-chart-line mr-3"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-users mr-3"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-cog mr-3"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="md:ml-64 flex-1 pb-16">
+            <!-- Header -->
+            <header class="bg-white dark:bg-slate-800 shadow-sm sticky top-0 z-10">
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center space-x-4">
+                        <button id="toggleSidebar" class="md:hidden text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-bars">s</i>
+                        </button>
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Monitoreo de componentes</h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-moon dark:fa-sun">s</i>
+                        </button>
+                        <div class="relative">
+                            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300">
+                                <i class="fas fa-bell">q</i>
+                                <span class="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <img src="C:\Users\Queve\OneDrive\Escritorio\Dennis\Imagenes\OZUNA.jpeg" alt="Foto de perfil de usuario profesional con traje y fondo neutro" 
+                                 class="w-8 h-8 rounded-full">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6">
+                <!-- Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">CPU</p>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1"><span id="cpu-value">72%</span></h3>
+                                <p class="text-green-500 text-sm flex items-center mt-1">
+                                    <i class="fas fa-microchip mr-1"></i> <span id="cpu-core">Intel core 14e</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-indigo-100 dark:bg-indigo-900">
+                                <i class="fas fa-microchip text-indigo-600 dark:text-indigo-300"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">GPU</p>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1"><span id="gpu-value">45%</span></h3>
+                                <p class="text-blue-500 text-sm flex items-center mt-1">
+                                    <i class="fas fa-gamepad mr-1"></i> <span id="gpu-model">RTX 3060</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-blue-100 dark:bg-blue-900">
+                                <i class="fas fa-video text-blue-600 dark:text-blue-300"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">RAM</p>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1"><span id="ram-value">64%</span></h3>
+                                <p class="text-purple-500 text-sm flex items-center mt-1">
+                                    <i class="fas fa-memory mr-1"></i> <span id="ram-size">16 GB</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-purple-100 dark:bg-purple-900">
+                                <i class="fas fa-memory text-purple-600 dark:text-purple-300"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">Disco duro</p>
+                                <h3 class="text-2xl font-bold text-gray-800 dark:text-white mt-1"><span id="disk-value">38%</span></h3>
+                                <p class="text-orange-500 text-sm flex items-center mt-1">
+                                    <i class="fas fa-hdd mr-1"></i> <span id="disk-space">512 GB SSD</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-lg bg-orange-100 dark:bg-orange-900">
+                                <i class="fas fa-hdd text-orange-600 dark:text-orange-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Chart -->
+                <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Hardware Performance</h3>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 text-sm rounded-lg bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300">
+                                Week
+                            </button>
+                            <button class="px-3 py-1 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300">
+                                Month
+                            </button>
+                            <button class="px-3 py-1 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-300">
+                                Year
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('open');
+        });
+
+        document.getElementById('closeSidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.remove('open');
+        });
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            document.body.setAttribute('data-theme', 
+                document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            
+            const icon = this.querySelector('i');
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        });
+
+        // Main chart
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const mainChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [4500, 5200, 4800, 5900, 6100, 5800, 7000],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.05)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }, {
+                    label: 'Users',
+                    data: [3200, 3800, 3500, 4200, 4600, 4900, 5300],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: getComputedStyle(document.body).getPropertyValue('--dark')
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            color: getComputedStyle(document.body).getPropertyValue('--dark')
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: getComputedStyle(document.body).getPropertyValue('--dark')
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Dark mode chart colors
+        function updateChartColors() {
+            const textColor = getComputedStyle(document.body).getPropertyValue('--dark');
+            
+            mainChart.options.plugins.legend.labels.color = textColor;
+            mainChart.options.scales.y.ticks.color = textColor;
+            mainChart.options.scales.x.ticks.color = textColor;
+            mainChart.update();
+        }
+
+        // Listen for theme changes
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'data-theme') {
+                    updateChartColors();
+                }
+            });
+        });
+
+        observer.observe(document.body, {
+            attributes: true
+        });
+
+        // Generate random hardware values
+        function getRandomValue(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function updateHardwareValues() {
+            document.getElementById('cpu-value').textContent = getRandomValue(10, 90) + '%';
+            document.getElementById('gpu-value').textContent = getRandomValue(5, 85) + '%';
+            document.getElementById('ram-value').textContent = getRandomValue(20, 95) + '%';
+            document.getElementById('disk-value').textContent = getRandomValue(10, 80) + '%';
+            
+            // Update every 3 seconds
+            setTimeout(updateHardwareValues, 3000);
+        }
+
+        // Initialize with some common hardware specs
+        const cpuModels = ['Dual Core', 'Quad Core', 'Hexa Core', 'Octa Core'];
+        const gpuModels = ['RTX 3060', 'RTX 3070', 'RX 6700', 'RX 6800'];
+        const ramSizes = ['8 GB', '16 GB', '32 GB', '64 GB'];
+        const diskSpaces = ['256 GB SSD', '512 GB SSD', '1 TB SSD', '2 TB SSD'];
+        
+        document.getElementById('cpu-core').textContent = cpuModels[Math.floor(Math.random() * cpuModels.length)];
+        document.getElementById('gpu-model').textContent = gpuModels[Math.floor(Math.random() * gpuModels.length)]; 
+        document.getElementById('ram-size').textContent = ramSizes[Math.floor(Math.random() * ramSizes.length)];
+        document.getElementById('disk-space').textContent = diskSpaces[Math.floor(Math.random() * diskSpaces.length)];
+
+        // Start updating values
+        updateHardwareValues();
+    </script>
+</body>
+</html>
+
